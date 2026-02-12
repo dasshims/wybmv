@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Will you be my girlfriend?</title>
+  <title>Will you be my Valentine?</title>
   <style>
     :root {
       --bg-1: #ff9a9e;
@@ -39,6 +39,7 @@
       max-width: 720px;
       width: min(92vw, 720px);
       backdrop-filter: blur(2px);
+      position: relative;
     }
 
     h1 {
@@ -75,12 +76,19 @@
     #yes {
       background: var(--yes);
       color: #fff;
+      animation: yesPulse 2.4s ease-in-out infinite;
     }
 
     #yes:hover,
     #yes:focus-visible {
       background: var(--yes-dark);
       transform: translateY(-2px);
+    }
+
+    @keyframes yesPulse {
+      0% { box-shadow: 0 10px 24px var(--shadow), 0 0 0 0 rgba(255, 77, 141, 0.4); }
+      70% { box-shadow: 0 10px 24px var(--shadow), 0 0 0 14px rgba(255, 77, 141, 0); }
+      100% { box-shadow: 0 10px 24px var(--shadow), 0 0 0 0 rgba(255, 77, 141, 0); }
     }
 
     #no {
@@ -93,6 +101,17 @@
     #no:hover,
     #no:focus-visible {
       transform: translateY(-2px);
+    }
+
+    #no.shake {
+      animation: shake 300ms ease;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      30% { transform: translateX(-6px); }
+      60% { transform: translateX(6px); }
+      100% { transform: translateX(0); }
     }
 
     .celebrate {
@@ -130,28 +149,169 @@
       100% { opacity: 0; }
     }
 
+    .confetti {
+      position: absolute;
+      top: -12px;
+      width: 10px;
+      height: 14px;
+      opacity: 0.9;
+      animation: confettiFall 2.6s ease-in forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(120vh) rotate(540deg); opacity: 0; }
+    }
+
+    .pulse-bg {
+      animation: pulseBg 1.6s ease-in-out 2;
+    }
+
+    @keyframes pulseBg {
+      0% { filter: saturate(1); }
+      50% { filter: saturate(1.2); }
+      100% { filter: saturate(1); }
+    }
+
     .note {
       font-size: clamp(0.95rem, 3vw, 1.1rem);
       margin-top: 8px;
       opacity: 0.8;
     }
+
+    .signature {
+      position: fixed;
+      bottom: 12px;
+      right: 16px;
+      font-size: 0.85rem;
+      color: rgba(122, 0, 38, 0.55);
+      letter-spacing: 0.06em;
+      pointer-events: none;
+    }
+
+    .countdown {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      margin-top: 6px;
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #ff92b6;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 6px 14px var(--shadow);
+    }
+
+    .love-notes {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    .love-note {
+      position: absolute;
+      font-size: 1rem;
+      animation: drift 18s linear infinite;
+    }
+
+    @keyframes drift {
+      0% { transform: translateY(20px) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-120vh) translateX(20px); opacity: 0; }
+    }
+
+    .collage {
+      margin: 16px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: min(320px, 80vw);
+      opacity: 0.75;
+    }
+
+    .collage img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px var(--shadow);
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, rgba(255, 255, 255, 0));
+      pointer-events: none;
+      animation: sparkle 600ms ease-out forwards;
+    }
+
+    @keyframes sparkle {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .starburst {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #fff1f7;
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+      animation: burst 800ms ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes burst {
+      0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(12); opacity: 0; }
+    }
   </style>
 </head>
 <body>
+  <div class="love-notes" id="love-notes"></div>
   <main class="card" id="app">
-    <h1>Will you be my girlfriend? 💖</h1>
+    <h1 id="question">Will you be my Valentine? 💖</h1>
     <div class="buttons" id="button-zone">
       <button id="yes" aria-label="Yes">YES 💖</button>
       <button id="no" aria-label="No">NO 😢</button>
     </div>
+    <div class="countdown" id="countdown"></div>
+    <div class="collage" aria-hidden="true">
+      <img src="images/mimi-1.JPG" alt="" />
+      <img src="images/jersey.jpg" alt="" />
+      <img src="images/mimi-2.jpg" alt="" />
+    </div>
     <div class="note">(Tap the buttons — I dare you.)</div>
   </main>
+  <button class="music-toggle" id="music-toggle">Play music</button>
+  <audio id="bg-music" loop preload="none">
+    <source src="wysnaa.mp3" type="audio/mpeg" />
+  </audio>
+  <div class="signature">Hims</div>
 
   <script>
     const noButton = document.getElementById("no");
     const yesButton = document.getElementById("yes");
     const app = document.getElementById("app");
     const zone = document.getElementById("button-zone");
+    const question = document.getElementById("question");
+    const countdown = document.getElementById("countdown");
+    const musicToggle = document.getElementById("music-toggle");
+    const bgMusic = document.getElementById("bg-music");
+    const loveNotes = document.getElementById("love-notes");
+    let noCount = 0;
 
     // Move the NO button to a random position inside its container.
     function moveNoButton() {
@@ -164,12 +324,19 @@
       noButton.style.position = "absolute";
       noButton.style.left = `${x}px`;
       noButton.style.top = `${y}px`;
+      noButton.classList.remove("shake");
+      void noButton.offsetWidth;
+      noButton.classList.add("shake");
     }
 
     // Trigger evasive behavior on hover and tap/click.
     ["mouseenter", "touchstart", "click"].forEach((eventName) => {
       noButton.addEventListener(eventName, (event) => {
         event.preventDefault();
+        noCount += 1;
+        if (noCount >= 5) {
+          yesButton.textContent = "YES!!! 💘";
+        }
         moveNoButton();
       });
     });
@@ -185,7 +352,19 @@
       heart.addEventListener("animationend", () => heart.remove());
     }
 
+    // Small confetti burst for extra celebration.
+    function spawnConfetti() {
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.style.left = `${Math.random() * 100}vw`;
+      confetti.style.background = Math.random() > 0.5 ? "#ff4d8d" : "#ffd1dc";
+      confetti.style.animationDuration = `${2 + Math.random()}s`;
+      document.body.appendChild(confetti);
+      confetti.addEventListener("animationend", () => confetti.remove());
+    }
+
     function celebrate() {
+      document.body.classList.add("pulse-bg");
       app.classList.add("fade");
       setTimeout(() => {
         app.innerHTML = `
@@ -199,11 +378,94 @@
       for (let i = 0; i < 18; i += 1) {
         setTimeout(spawnHeart, i * 80);
       }
+      for (let i = 0; i < 40; i += 1) {
+        setTimeout(spawnConfetti, i * 40);
+      }
+      for (let i = 0; i < 3; i += 1) {
+        setTimeout(spawnStarburst, i * 300);
+      }
       const stream = setInterval(spawnHeart, 400);
       setTimeout(() => clearInterval(stream), 6000);
     }
 
     yesButton.addEventListener("click", celebrate);
+
+    // Subtle sparkle trail for taps/moves.
+    function spawnSparkle(x, y) {
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      sparkle.style.left = `${x - 5}px`;
+      sparkle.style.top = `${y - 5}px`;
+      document.body.appendChild(sparkle);
+      sparkle.addEventListener("animationend", () => sparkle.remove());
+    }
+
+    document.addEventListener("pointermove", (event) => {
+      if (Math.random() < 0.18) spawnSparkle(event.clientX, event.clientY);
+    });
+
+    document.addEventListener("touchstart", (event) => {
+      const touch = event.touches[0];
+      if (touch) spawnSparkle(touch.clientX, touch.clientY);
+    });
+
+    function spawnStarburst() {
+      const burst = document.createElement("div");
+      burst.className = "starburst";
+      document.body.appendChild(burst);
+      burst.addEventListener("animationend", () => burst.remove());
+    }
+
+    // Love notes background.
+    const notes = ["love you", "xoxo", "forever", "mine", "kiss", "be mine", "sweet"];
+    for (let i = 0; i < 12; i += 1) {
+      const note = document.createElement("div");
+      note.className = "love-note";
+      note.textContent = notes[i % notes.length];
+      note.style.left = `${Math.random() * 100}vw`;
+      note.style.top = `${60 + Math.random() * 60}vh`;
+      note.style.animationDelay = `${Math.random() * 10}s`;
+      note.style.fontSize = `${0.85 + Math.random() * 0.6}rem`;
+      loveNotes.appendChild(note);
+    }
+
+    // Countdown to next Valentine's Day.
+    function updateCountdown() {
+      const now = new Date();
+      const year = now.getMonth() > 1 || (now.getMonth() === 1 && now.getDate() > 14) ? now.getFullYear() + 1 : now.getFullYear();
+      const target = new Date(year, 1, 14, 0, 0, 0);
+      const diff = target - now;
+      const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+      countdown.textContent = `Valentine’s Day is in ${days} day${days === 1 ? "" : "s"} 💘`;
+    }
+    updateCountdown();
+
+    // Music toggle: user gesture is required on most devices.
+    async function startMusic() {
+      try {
+        await bgMusic.play();
+        bgMusic.muted = false;
+        musicToggle.textContent = "Mute music";
+      } catch (error) {
+        musicToggle.textContent = "Play music";
+      }
+    }
+
+    musicToggle.addEventListener("click", async () => {
+      if (bgMusic.paused) {
+        await startMusic();
+      } else {
+        bgMusic.muted = !bgMusic.muted;
+        musicToggle.textContent = bgMusic.muted ? "Unmute music" : "Mute music";
+      }
+    });
+
+    // First tap anywhere on the page also tries to start music.
+    const firstTap = async () => {
+      if (bgMusic.paused) await startMusic();
+      document.removeEventListener("pointerdown", firstTap);
+    };
+    document.addEventListener("pointerdown", firstTap);
   </script>
 </body>
 </html>
