@@ -179,11 +179,24 @@
       opacity: 0.8;
     }
 
-    .counter {
-      margin-top: 10px;
-      font-size: 0.85rem;
-      opacity: 0.55;
+    .counter-float {
+      position: fixed;
+      right: 14px;
+      bottom: -24px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
       letter-spacing: 0.04em;
+      color: rgba(122, 0, 38, 0.7);
+      animation: counterRise 10s linear infinite;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @keyframes counterRise {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-120vh); opacity: 0; }
     }
 
     .signature {
@@ -377,7 +390,7 @@
         app.innerHTML = `
           <h1 class="celebrate">YAY!!! You made me the happiest person ever 💕</h1>
           <div class="note">Now it’s official. 💌</div>
-          <div class="counter">total yes clicks: <span id="yes-count">—</span></div>
+          <div class="counter-float">total yes: <span id="yes-count">—</span></div>
         `;
         app.classList.remove("fade");
       }, 250);
