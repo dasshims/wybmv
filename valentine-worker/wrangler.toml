@@ -1,0 +1,8 @@
+name = "valentine-worker"
+main = "src/index.js"
+compatibility_date = "2026-02-12"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "valentine_clicks"
+database_id = "f737cb76-3d4f-4932-b61c-e9e13a08ed8c"

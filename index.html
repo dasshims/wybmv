@@ -374,6 +374,9 @@
         app.classList.remove("fade");
       }, 250);
 
+      // Log YES clicks to the Cloudflare Worker (replace with your Worker URL).
+      fetch("https://REPLACE_ME.workers.dev/log", { method: "POST" }).catch(() => {});
+
       // Burst of hearts, then a gentle stream.
       for (let i = 0; i < 18; i += 1) {
         setTimeout(spawnHeart, i * 80);
