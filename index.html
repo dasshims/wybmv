@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Will you be my girlfriend?</title>
+  <style>
+    :root {
+      --bg-1: #ff9a9e;
+      --bg-2: #fad0c4;
+      --bg-3: #fbc2eb;
+      --text: #7a0026;
+      --yes: #ff4d8d;
+      --yes-dark: #e13a77;
+      --no: #ffffff;
+      --shadow: rgba(122, 0, 38, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, var(--bg-3), transparent 50%),
+                  linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      font-family: "Comic Sans MS", "Bradley Hand", "Chalkboard SE", "Segoe Print", cursive;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .card {
+      text-align: center;
+      padding: 24px;
+      max-width: 720px;
+      width: min(92vw, 720px);
+      backdrop-filter: blur(2px);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin: 0 0 24px;
+      text-shadow: 0 6px 18px var(--shadow);
+    }
+
+    .buttons {
+      position: relative;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 28px;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      box-shadow: 0 10px 24px var(--shadow);
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    #yes {
+      background: var(--yes);
+      color: #fff;
+    }
+
+    #yes:hover,
+    #yes:focus-visible {
+      background: var(--yes-dark);
+      transform: translateY(-2px);
+    }
+
+    #no {
+      background: var(--no);
+      color: var(--text);
+      border: 2px solid #ff92b6;
+      position: relative;
+    }
+
+    #no:hover,
+    #no:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .celebrate {
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      margin: 0;
+      animation: pop 400ms ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -24px;
+      font-size: clamp(1rem, 4vw, 1.8rem);
+      animation: floatUp 4s ease-in forwards;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 8px rgba(122, 0, 38, 0.35));
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.8); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.4); opacity: 0; }
+    }
+
+    .fade {
+      animation: fadeOut 300ms ease forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .note {
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <main class="card" id="app">
+    <h1>Will you be my girlfriend? 💖</h1>
+    <div class="buttons" id="button-zone">
+      <button id="yes" aria-label="Yes">YES 💖</button>
+      <button id="no" aria-label="No">NO 😢</button>
+    </div>
+    <div class="note">(Tap the buttons — I dare you.)</div>
+  </main>
+
+  <script>
+    const noButton = document.getElementById("no");
+    const yesButton = document.getElementById("yes");
+    const app = document.getElementById("app");
+    const zone = document.getElementById("button-zone");
+
+    // Move the NO button to a random position inside its container.
+    function moveNoButton() {
+      const zoneRect = zone.getBoundingClientRect();
+      const btnRect = noButton.getBoundingClientRect();
+      const maxX = zoneRect.width - btnRect.width;
+      const maxY = zoneRect.height - btnRect.height;
+      const x = Math.random() * Math.max(0, maxX);
+      const y = Math.random() * Math.max(0, maxY);
+      noButton.style.position = "absolute";
+      noButton.style.left = `${x}px`;
+      noButton.style.top = `${y}px`;
+    }
+
+    // Trigger evasive behavior on hover and tap/click.
+    ["mouseenter", "touchstart", "click"].forEach((eventName) => {
+      noButton.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        moveNoButton();
+      });
+    });
+
+    // Create floating heart particles.
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = Math.random() > 0.5 ? "💖" : "💕";
+      heart.style.left = `${Math.random() * 100}vw`;
+      heart.style.animationDuration = `${3 + Math.random() * 2}s`;
+      document.body.appendChild(heart);
+      heart.addEventListener("animationend", () => heart.remove());
+    }
+
+    function celebrate() {
+      app.classList.add("fade");
+      setTimeout(() => {
+        app.innerHTML = `
+          <h1 class="celebrate">YAY!!! You made me the happiest person ever 💕</h1>
+          <div class="note">Now it’s official. 💌</div>
+        `;
+        app.classList.remove("fade");
+      }, 250);
+
+      // Burst of hearts, then a gentle stream.
+      for (let i = 0; i < 18; i += 1) {
+        setTimeout(spawnHeart, i * 80);
+      }
+      const stream = setInterval(spawnHeart, 400);
+      setTimeout(() => clearInterval(stream), 6000);
+    }
+
+    yesButton.addEventListener("click", celebrate);
+  </script>
+</body>
+</html>
