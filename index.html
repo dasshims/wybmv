@@ -383,7 +383,21 @@
       }, 250);
 
       // Log YES clicks to the Cloudflare Worker (replace with your Worker URL).
-      fetch("https://REPLACE_ME.workers.dev/log", { method: "POST" }).catch(() => {});
+      const workerBase = "https://valentine-worker.wybmv.workers.dev";
+      fetch(`${workerBase}/log`, { method: "POST" }).catch(() => {});
+
+      // Fetch the updated total count and display it.
+      setTimeout(() => {
+        fetch(`${workerBase}/count`)
+          .then((res) => res.json())
+          .then((data) => {
+            const el = document.getElementById("yes-count");
+            if (el && typeof data.total === "number") {
+              el.textContent = data.total.toString();
+            }
+          })
+          .catch(() => {});
+      }, 300);
 
       // Burst of hearts, then a gentle stream.
       for (let i = 0; i < 18; i += 1) {
