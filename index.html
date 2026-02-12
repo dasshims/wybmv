@@ -179,6 +179,13 @@
       opacity: 0.8;
     }
 
+    .counter {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      opacity: 0.55;
+      letter-spacing: 0.04em;
+    }
+
     .signature {
       position: fixed;
       bottom: 12px;
@@ -370,6 +377,7 @@
         app.innerHTML = `
           <h1 class="celebrate">YAY!!! You made me the happiest person ever 💕</h1>
           <div class="note">Now it’s official. 💌</div>
+          <div class="counter">total yes clicks: <span id="yes-count">—</span></div>
         `;
         app.classList.remove("fade");
       }, 250);
